@@ -1,0 +1,23 @@
+---
+title: "2. Adding metadata"
+---
+
+Once you've deployed your contract, you'll need a way for each individual item to show up properly on OpenSea (as well as other websites that support non-fungible tokens). This is where off-chain _metadata_ comes in to play! Each token identifier in your ERC721 contract will have corresponding metadata URI that returns additional important information about the item, such as the item's name, image, description, etc. To find this URI, we use the `tokenURI` method in ERC721 and the `uri` method in ERC1155\. A simple example of this metadata is:
+
+`{
+  "name": "Herbie Starbelly",
+  "description": "Friendly OpenSea Creature that enjoys long swims in the ocean.",
+  "image": "https://storage.googleapis.com/opensea-prod.appspot.com/creature/50.png",
+  "attributes": [...]
+}
+`
+
+![2564](/images/2d0feb5-Screen_Shot_2021-08-05_at_4.31.45_PM.png "Screen Shot 2021-08-05 at 4.31.45 PM.png") 
+
+There's quite a lot you can do with metadata -- including adding rankings, boosts, animations, dates, and much more! We think you'll definitely want to explore it in full, so please see our dedicated [metadata standards documentation](/docs/metadata-standards) for this piece of the tutorial. 
+
+[Check it out](/v1.0/docs/metadata-standards)
+
+## What's next?
+
+So, you've got your own metadata API. You'll need to hook it up to a token contract, so change the line [here](https://github.com/ProjectOpenSea/opensea-creatures/blob/a0db5ede13ffb2d43b3ebfc2c50f99968f0d1bbb/contracts/Creature.sol#L14) to use the URL for your API, then redeploy your contract and mint a few test items. Once you've done that, proceed to the next section for more info on viewing your assets on OpenSea.

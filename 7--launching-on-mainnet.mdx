@@ -1,0 +1,15 @@
+---
+title: "7. Launching on mainnet"
+---
+
+Finished testing on Rinkeby and ready to launch your asset on the mainnet? Super exciting! The process is roughly the same, with just a few environment variable changes
+
+Once you've deployed your contract and minted your items, click [here](https://opensea.io/get-listed) to go to the storefront creator for mainnet. This will walk you through the process of getting all of your items to show up on the mainnet OpenSea platform.
+
+## Notes on mainnet deployment
+
+When running the minting script on mainnet, your environment variable needs to be set to `mainnet` not `live`. The environment variable affects the node's URL in the minting script, not truffle. 
+
+When you deploy, you're using truffle and you need to give truffle an argument that corresponds to the naming in truffle.js (`--network live`). But when you mint, you're relying on the environment variable you set to build the URL ([https://github.com/ProjectOpenSea/opensea-creatures/blob/master/scripts/mint.js#L54](https://github.com/ProjectOpenSea/opensea-creatures/blob/master/scripts/mint.js#L54)), so you need to use the term that makes Alchemy or Infura happy (`mainnet`). Truffle and Alchemy/Infura use the same terminology for Rinkeby, but different terminology for mainnet. 
+
+If you start your minting script, but nothing happens, double check your environment variables.

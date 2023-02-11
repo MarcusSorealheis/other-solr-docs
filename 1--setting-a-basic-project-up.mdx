@@ -1,0 +1,276 @@
+---
+title: "1. Setting a basic project up"
+description: "Writing some Solidity code!"
+---
+
+## Directory Structure
+
+Let start organizing the basics of our NFT contract repo! We'll want to start by creating some folders for the contract we will be writing and for the migration scripts that we will use to deploy those contracts
+
+Shell
+
+`mkdir contracts
+mkdir scripts
+`
+
+All Solidity code will run in `contracts/`, whereas `scripts/` will contain some JavaScript files we will need to bootstrap the contracts and deploy them later on.
+
+## Let's write our first smart contract!
+
+Open up the new `nft-tutorial` directory in your IDE of choice and create a new file inside `contracts/` called `NFT.sol` 
+
+NFT.sol
+
+`// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
+
+contract NFT is ERC721 {
+    using Counters for Counters.Counter;
+    Counters.Counter private currentTokenId;
+    
+    constructor() ERC721("NFTTutorial", "NFT") {}
+    
+    function mintTo(address recipient)
+        public
+        returns (uint256)
+    {
+        currentTokenId.increment();
+        uint256 newItemId = currentTokenId.current();
+        _safeMint(recipient, newItemId);
+        return newItemId;
+    }
+}
+`
+
+There's a lot going on here so let's break down some of the key portions of this code: 
+
+* In Line 1 we define the version of Solidity we want to use
+* Next, from Lines 4-5, we import the necessary contracts from OpenZeppelin to quickly create an implementation of ERC721 without having to "re-invent the wheel" of NFTs. The 2 contracts imported are:  
+   * `ERC721.sol`: a 'vanilla' implementation for Non-Fungible Tokens that already implements a ton of useful helper functions. For more information, refer to [OpenZeppelin's documentation](https://docs.openzeppelin.com/contracts/4.x/erc721)  
+   * `Counters.sol`: Provides counters that can only be incremented, decremented or reset that we can use to keep track of total tokens minted as well as quickly get the next tokenId to mint.
+* The next few lines define the NFT contract itself, with Line 7 defining NFT to inherit from ERC721\. Note that Solidity contracts support using mixins and can inherit from several different contracts at once. More on that later.
+* Lines 8-9 import and then declare a Counter that we will use to efficiently keep track of the total tokens minted in our contract.
+* Line 11 defines the constructor, which for now simply calls its parent ERC721 constructor and passes in two strings: `name` and `symbol`. For now, this constructor is fairly lightweight.
+* Finally, we define the ever-covetted `mintTo` function. This public function can be called by passing in a valid recipient address in order to mint a new NFT. For now, its very simple:  
+   * It increments our `currentTokenId` Counter,  
+   * Mints the next value of the Counter to the `recipient`, using OpenZeppelin's nifty [\_safeMint()](https://docs.openzeppelin.com/contracts/4.x/api/token/erc721#ERC721-%5FsafeMint-address-uint256-) private method  
+   * Finally, it returns the newly minted token's ID back to the caller.
+
+> ### 👍
+> 
+> Congrats!
+> 
+> This very basic contract is pretty much all you need written before we can deploy and use it. Although we are missing many important features that make NFTs exciting today (which we will add soon), this basic implementation can be deployed and used on OpenSea or any other NFT marketplace.
+> 
+> Thanks to OpenZeppelin's standardized implementation, NFT contracts today don't have to implement many tedious functions like `transferFrom`.
+
+After writing your contract, your project should look like this:
+
+Shell
+
+`tree -L 3 -I 'node_modules*|cache*'
+`
+
+Shell
+
+`├── contracts
+│   └── NFT.sol
+├── hardhat.config.js
+├── package-lock.json
+├── package.json
+└── scripts
+`
+
+## Compiling our contract
+
+Now that we have our (basic) contract written, let's work to compile it and make sure it is ready to go for deployment.
+
+To do that, we're going to have to integrate our earlier-created MetaMask account into our project, since deploying the contract is going to cost us ETH. 
+
+First, let's create a new file, `.env` in the root folder of the project. We'll use this file to store the private key of our account as well as our Alchemy API key. 
+
+* Get your private key from your MetaMask wallet by following the instructions [here](https://metamask.zendesk.com/hc/en-us/articles/360015289632)
+* Get your Alchemy API key [here](https://docs.alchemy.com/alchemy/introduction/getting-started)
+
+> ### ❗️
+> 
+> (another) warning about private keys
+> 
+> Private keys are an all-access pass to the funds within your wallet. When fetching them, make sure you are in a safe, private environment and that you are not screen-sharing via any computer program. For more information on wallet-safety read our article here TODO
+
+Once you have both your private key and Alchemy API key ready, paste them into `.env` in the following format:
+
+.env
+
+`ALCHEMY_KEY = "alchemy-api-key"
+ACCOUNT_PRIVATE_KEY = "private-key"
+`
+
+Next, update the `hardhat.config.js` file to add the following:
+
+hardhat.config.js
+
+`` /**
+* @type import('hardhat/config').HardhatUserConfig
+*/
+
+require('dotenv').config();
+require("@nomiclabs/hardhat-ethers");
+
+const { ALCHEMY_KEY, ACCOUNT_PRIVATE_KEY } = process.env;
+
+module.exports = {
+   solidity: "0.8.0",
+   defaultNetwork: "rinkeby",
+   networks: {
+    hardhat: {},
+    rinkeby: {
+      url: `https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_KEY}`,
+      accounts: [`0x${ACCOUNT_PRIVATE_KEY}`]
+    },
+    ethereum: {
+      chainId: 1,
+      url: `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_KEY}`,
+      accounts: [`0x${ACCOUNT_PRIVATE_KEY}`]
+    },
+  },
+}
+ ``
+
+These changes should be relatively straightforward: 
+
+* Some required imports from `dotenv` in order to use the variables we defined earlier and from `hardhat-ethers` in order to later deploy our contract.
+* A module configuration that defines our default Solidity version, default network, and some network configurations so that we can deploy the same code to Rinkeby testnet, Ethereum mainnet , or any other network later on.
+
+**Compile the contract**  
+We are now ready to compile the contract.
+
+Shell
+
+`npx hardhat compile
+`
+
+Your results: 
+
+Text
+
+`Compiling 1 file with 0.8.0
+Compilation finished successfully
+`
+
+If all went well, the above command should work with no errors.
+
+## Deploying the contract
+
+Almost at the finish line. All that's left now is to write a simple deploy script in JavaScript and to run it using Hardhat.
+
+Inside the `scripts/` folder, create a file called `deploy.js` and implement it as follows:
+
+deploy.js
+
+`` async function main() {
+
+    // Get our account (as deployer) to verify that a minimum wallet balance is available
+    const [deployer] = await ethers.getSigners();
+
+    console.log(`Deploying contracts with the account: ${deployer.address}`);
+    console.log(`Account balance: ${(await deployer.getBalance()).toString()}`);
+
+    // Fetch the compiled contract using ethers.js
+    const NFT = await ethers.getContractFactory("NFT");
+    // calling deploy() will return an async Promise that we can await on 
+    const nft = await NFT.deploy();
+
+    console.log(`Contract deployed to address: ${nft.address}`);
+}
+
+main()
+.then(() => process.exit(0))
+.catch((error) => {
+    console.error(error);
+    process.exit(1);
+});
+ ``
+
+This JS function fetches the compiled NFT contract from `NFT.sol` and deploys it. It also prints out your wallet balance before and after the deploy, since gas will be used in the transaction.  
+Most of this code is copied over from Hardhat, who do an excellent job of explaining the different components at play here [in their tutorial](https://hardhat.org/tutorial/testing-contracts.html). Don't let the section title fool you, it is full of useful Hardhat information not just related to testing.
+
+Our project should now look like this
+
+Shell
+
+`tree -L 3 -I 'node_modules*|cache*'
+`
+
+Shell
+
+`├── artifacts
+│   ├── @openzeppelin
+│   │   └── contracts
+│   ├── build-info
+│   │   └── f179c78b6322d2fddc1e72511467aa46.json
+│   └── contracts
+│       └── NFT.sol
+├── contracts
+│   └── NFT.sol
+├── hardhat.config.js
+├── package-lock.json
+├── package.json
+└── scripts
+    └── deploy.js
+
+8 directories, 6 files
+`
+
+_Note:_ The `artifacts` directory contains all our compiled contracts and their dependencies.
+
+We are now ready to deploy the contract!
+
+Shell
+
+`npx hardhat run scripts/deploy.js --network rinkeby
+`
+
+You should see a response that looks like this:
+
+Shell
+
+`Deploying contracts with the account: {ACCOUNT_ADDRESS}
+Account balance: 505059205368653101
+Contract deployed to address: {NFT_CONTRACT_ADDRESS}
+`
+
+Grab that deployed contract address and head over to the [Rinkeby Etherscan](https://rinkeby.etherscan.io/) and see your deployed contract!
+
+> ### 📘
+> 
+> Deploying to mainnet
+> 
+> Because we took the time to define both the Rinkeby testnet and Ethereum mainnet as network options in `hardhat.config.js`, deploying the same exact contract code to mainnet (when we are ready) is as easy as replacing `--network rinkeby` with `--network ethereum` in the command above.
+
+## Summary
+
+We did a lot in this part of the tutorial! We went from an empty project to a deployed NFT in Rinkeby. Congrats on making it this far! To summarize what we did so far:
+
+* We wrote a basic smart contract in Solidity that extends the existing `ERC721` implementation
+* We set up a basic Hardhat configuration file and compiled our contract
+* Finally, we wrote a basic script to deploy our contract in JavaScript and actually deployed something to the Rinkeby blockchain.
+
+## Next Steps
+
+Our smart contract is out there, but we can't really easily do much with it just yet. In fact, we don't even know how to mint any tokens from it yet!
+
+> ### 👍
+> 
+> Challenge: Deploying to Polygon
+> 
+> Test yourself by thinking through how you could change your configuration and commands in order to deploy this same contract to the Polygon testnet: Mumbai. Assuming that for our context, Polygon is functionally the same as Ethereum, what needs to be changed or added to deploy to Polygon's network. Does the code need to change? Does the configuration file? What about the commands we ran?
+> 
+> Hint: Mumbai's chain ID is `80001` and Alchemy, our RPC provider, supports the Polygon network.
+
+In the next part of the tutorial, we'll go over how to mint tokens using some new scripts, how we can improve our contract to give it more advanced functionality such as mint purchase prices, and even add some neat metadata so that it actually shows your amazing art when users view it on OpenSea.
+
+After that, we will go into more advanced topics like verifying your contract on Etherscan, deploying a companion website that anyone can browse to mint from your contract, and advanced Solidity concepts that can be used for neat mechanics within your contract.

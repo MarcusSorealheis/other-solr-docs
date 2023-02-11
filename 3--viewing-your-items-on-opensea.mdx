@@ -1,0 +1,38 @@
+---
+title: "3. Viewing your items on OpenSea"
+---
+
+So now let's say you've deployed your contract on the Rinkeby test network. For a concrete example, we deployed the OpenSea Creature contract on Rinkeby to the following address: [0x7dca125b1e805dc88814aed7ccc810f677d3e1db](https://rinkeby.etherscan.io/address/0x7dca125b1e805dc88814aed7ccc810f677d3e1db).
+
+We also minted 25 new items to this contract, so that the total supply of items is currently 25\. On [Etherscan](https://rinkeby.etherscan.io/address/0xccd0f00bce2836f72c85b0dd3af93a365ec32411#readContract), we can inspect the `tokenURI` for one of these items to see that it points to the OpenSea Creature API endpoint.
+
+![2236](/images/acac5eb-tokenuri.png "tokenuri.png") 
+
+Now for the exciting part! OpenSea has a Rinkeby environment that allows developers to test their integration with OpenSea. This can be found at [testnets.opensea.io](https://testnets.opensea.io). By hitting the right URL, we should be able to immediately view one of our items on OpenSea. The URL can be constructed in the following way:
+
+`https://testnets.opensea.io/assets/<asset_contract_address>/<token_id>
+`
+
+Where `asset_contract_address` is the address of our contract, and `token_id` is one of the token id's of our items. For example, for the OpenSea Creature contract, here's OpenSea Creature #12:
+
+[https://testnets.opensea.io/assets/0x7dca125b1e805dc88814aed7ccc810f677d3e1db/12](https://testnets.opensea.io/assets/0x7dca125b1e805dc88814aed7ccc810f677d3e1db/12) 
+
+![2676](/images/b9865d7-Screen_Shot_2021-08-05_at_4.32.35_PM.png "Screen Shot 2021-08-05 at 4.32.35 PM.png") 
+
+By using your own contract address and token ID, you can view your item too and double check that everything shows up as expected. Notice that the attributes we included in the token metadata showed up as "properties" and "stats" for the item. This will automatically happen as long as you include them as strings or ints in the attributes section of your metadata. To test out the integration, simply navigate to:
+
+`https://testnets.opensea.io/assets/<your_contract_address>/<token_id>
+`
+
+By default, OpenSea will cache the data for your asset. Need to force an update to your item? Just hit the API with the `force_update` param:
+
+`https://testnets-api.opensea.io/api/v1/asset/<your_contract_address>/<token_id>/?force_update=true
+`
+
+## What's next?
+
+If you're having issues getting your items to show up properly on OpenSea (perhaps they're missing an image or attributes), you can debug your metadata using the following API endpoint.
+
+Check out the next section for info on debugging.
+
+If your metadata is showing up as expected, you can skip straight to [section 5](/docs/5-backfilling-items).

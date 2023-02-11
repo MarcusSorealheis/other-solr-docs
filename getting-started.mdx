@@ -1,0 +1,182 @@
+---
+title: "Getting Started"
+description: "Downloading required dependencies and setting up a development environment"
+---
+
+## Install MetaMask and create an Ethereum account
+
+In order to interact with a smart contract on Ethereum, you will need to install a wallet and initialize an account with some ether in it. 
+
+MetaMask, one of the most popular wallet apps, has an extension that can be installed directly into your web browser as well as a mobile app that you can use on iOS and Android. [Download MetaMask here](https://metamask.io/download.html) and create a new wallet.
+
+> ### ❗️
+> 
+> Your wallet credentials should be kept private!
+> 
+> When creating your new MetaMask wallet, you'll be given a seed phrase of 12 randomly generated words. These words can give you (or anyone else!) access to your account to send transactions and add or remove funds from your account. Keep this seed phrase somewhere secure, and never share it on the internet. We recommend [1Password](https://1password.com/) for keeping it secure.
+
+![980](/images/4575913-mm-os-.png "mm-os-.png") 
+
+## Add some Rinkeby ether from a faucet to your account
+
+Once you are finished with setting up your MetaMask account you will see a brand new account with 0 ETH in it ready for you to use. Switch over from the Ethereum mainnet to the Rinkeby testnet by clicking on the network names at the top and selecting Rinkeby, which is the default Ethereum network used on our [testnet website](http://testnets.opensea.io/) 
+
+![965](/images/e1218e8-mm-os-2.png "mm-os-2.png") ![941](/images/f4b7e6b-mm-os-3.png "mm-os-3.png") 
+
+To add some Rinkeby ether to your wallet, you can go to the [Rinkeby Faucet](https://faucet.rinkeby.io/) and request some Rinkeby ether be added to your account. Note that you might have to verify a non-malicious request for ether by posting on social media.
+
+![1618](/images/8f50689-Screen_Shot_2021-11-28_at_9.58.36_PM.png "Screen Shot 2021-11-28 at 9.58.36 PM.png") 
+
+## Initialize a new project in your workspace and add dependencies
+
+Create a new folder on your computer and initialize a new project. After that, add the following dependencies that we will be using in this project. Alternatively, download this starter project with some preset dependencies. Note: this tutorial assumes you have a recent version of npm (we used **8.0.0** for this tutorial) available on your computer.
+
+Shell
+
+`mkdir nft-tutorial
+cd nft-tutorial
+`
+
+Confirm the valid minimum version of npm is used.
+
+Shell
+
+`npm --version
+`
+
+Response `8.0.0` or newer. 
+
+Shell
+
+`npm init
+`
+
+Shell
+
+`# fill out the form fields or use defaults
+...
+
+{
+  "name": "nft-tutorial",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
+`
+
+**Install dependencies**
+
+* [Hardhat](https://hardhat.org/getting-started/#overview),  
+   * [Hardhat-ethers](https://hardhat.org/plugins/nomiclabs-hardhat-ethers.html)  
+   * [Hardhat-etherscan](https://hardhat.org/plugins/nomiclabs-hardhat-etherscan.html)
+* [OpenZeppelin Contracts](https://docs.openzeppelin.com/contracts/4.x/),
+* [dotenv](https://www.npmjs.com/package/dotenv),
+* [ethers.js](https://docs.ethers.io/v5/)
+* [node-fetch](https://www.npmjs.com/package/node-fetch)
+
+Shell
+
+`npm install --save-dev hardhat
+...
+
+npm install --save-dev @nomiclabs/hardhat-ethers
+...
+
+npm install --save-dev @nomiclabs/hardhat-etherscan
+...
+
+npm install @openzeppelin/contracts
+...
+
+npm install dotenv --save
+...
+
+npm install --save-dev [[email protected]](/cdn-cgi/l/email-protection)^5.0.0
+...
+
+npm install --save-dev [[email protected]](/cdn-cgi/l/email-protection)
+...
+`
+
+To use your local installation of Hardhat, you need to use `npx` to run it (i.e. `npx hardhat`). After you've finished all installations, your `package.json` file should look (more or less) like this:
+
+package.json
+
+`{
+  "name": "nft-tutorial",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.2",
+    "ethers": "^5.5.2",
+    "hardhat": "^2.7.0",
+    "node-fetch": "^2.6.6"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.4.0",
+    "dotenv": "^10.0.0"
+  }
+}
+`
+
+## Initialize the Hardhat
+
+Final step in setting up this project: initializing a (blank) Hardhat project:
+
+Text
+
+`> npx hardhat
+888    888                      888 888               888
+888    888                      888 888               888
+888    888                      888 888               888
+8888888888  8888b.  888d888 .d88888 88888b.   8888b.  888888
+888    888     "88b 888P"  d88" 888 888 "88b     "88b 888
+888    888 .d888888 888    888  888 888  888 .d888888 888
+888    888 888  888 888    Y88b 888 888  888 888  888 Y88b.
+888    888 "Y888888 888     "Y88888 888  888 "Y888888  "Y888
+
+👷 Welcome to Hardhat v2.7.0 👷‍
+
+? What do you want to do? …
+  Create a basic sample project
+  Create an advanced sample project
+  Create an advanced sample project that uses TypeScript
+❯ Create an empty hardhat.config.js
+  Quit
+  
+  ...
+  
+  ✨ Config file created ✨
+`
+
+Annndd you're all done! Your project should be structured like this:
+
+Shell
+
+`> tree -L 3 -I 'node_modules*|cache*'
+.
+├── hardhat.config.js
+├── package-lock.json
+└── package.json
+`
+
+* `hardhat.config.js` is a hardhat configuration file where we can define our blockchain configuration variables such as which network we want to operate on and which accounts to use.
+* `package.json` and `package-lock.json` are npm-created files used to define dependencies we might need.
+
+## Smart contracts? wallets? accounts? ether?? Rinkeby?? HUH?
+
+We just threw a ton of new words at you, and if any of the above was confusing, please review some of our Help Center articles regarding introductory terms to learn before diving into NFTs:
+
+* [Key Terms to learn](https://support.opensea.io/hc/en-us/articles/1500003113761-What-are-the-key-terms-to-know-before-I-get-started-)
+* [What is a crypto wallet](https://support.opensea.io/hc/en-us/articles/1500008812861-What-is-a-crypto-wallet-)

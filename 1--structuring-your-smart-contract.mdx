@@ -1,0 +1,98 @@
+---
+title: "1. Structuring your smart contract"
+description: "Leveraging the ERC721 standard to make your items instantly tradeable on OpenSea"
+---
+
+Pioneered by CryptoKitties, [ERC721](http://erc721.org) is the latest standard in non-fungible tokens. To be listed on OpenSea, it's best if your items adhere to the latest [Open Zeppelin](https://github.com/OpenZeppelin/openzeppelin-solidity/tree/master/contracts/token/ERC721) implementation of ERC721.
+
+\*If you're developing an ERC1155 contract, please check out our [ERC1155 Tutorial](/docs/opensea-erc1155-tutorial).
+
+## OpenSea Creature Sample Contract
+
+We've created a [very simple starter repository](https://github.com/ProjectOpenSea/opensea-creatures) to get you started. The full code for the sample can be found on [Github](https://github.com/ProjectOpenSea/opensea-creatures).
+
+The sample code is a collectible called OpenSea Creatures. OpenSea Creatures are pretty basic: they each have a unique look, traits, and attributes. While one day we may add more of a game around these creatures, for the purpose of this example, the main thing you can do with a creature is own it. You can check out all the OpenSea creatures on the Rinkeby environment for OpenSea [here](https://testnets.opensea.io/collection/opensea-creature).
+
+### Creature ERC721 contract
+
+sol
+
+`pragma solidity ^0.5.0;
+
+import "./ERC721Tradable.sol";
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+
+/**
+ * @title Creature
+ * Creature - a contract for my non-fungible creatures.
+ */
+contract Creature is TradeableERC721Token {
+  constructor(address _proxyRegistryAddress) TradeableERC721Token("Creature", "OSC", _proxyRegistryAddress) public {  }
+
+  function baseTokenURI() public view returns (string memory) {
+    return <exampleUrlHere>;
+  }
+}
+`
+
+As you can see, the contract itself is pretty simple. It just inherits from `TradeableERC721Token`, which in turn inherits from the OpenZeppelin ERC721 contracts (which implement all of the necessary ERC721 methods). You'll probably have more logic in your game, but the important piece for OpenSea is the `baseTokenURI` method, which allows us to map the `tokenId`'s in the Creature contract to some metadata off-chain about the contract. We'll learn more about this in the [next section](/docs/2-adding-metadata).
+
+### OpenSea Whitelisting (optional)
+
+Additionally, the `ERC721Tradable` and `ERC1155Tradable` contracts whitelist the proxy accounts of OpenSea users so that they are automatically able to trade any item on OpenSea (without having to pay gas for an additional approval). On OpenSea, each user has a "proxy" account that they control, and is ultimately called by the marketplace contracts to trade their items.
+
+Note that this addition does not mean that OpenSea itself has access to the items, simply that the users can list them more easily if they wish to do so. It's entirely optional, but results in significantly less user friction. You can find this code in the overridden `isApprovedForAll` method, along with the factory `mint` methods.
+
+Next we'll learn about how to structure that metadata so it can be picked up by OpenSea.
+
+### Using Ownable
+
+The Ownable contract module can be mixed-into contracts to provide basic access control mechanisms. It establishes the concept of a contract owner, who can be granted exclusive access to certain functions within the contract. 
+
+By default, the owner account will be the one that deploys the contract. This can later be changed with transferOwnership.
+
+This module is used through inheritance. It will make available the modifier onlyOwner, which can be applied to your functions to restrict their use to the owner.
+
+For developers to set up contracts on OpenSea automatically.
+
+[Read the OpenZeppelin docs on Ownable](https://docs.openzeppelin.com/contracts/4.x/api/access#Ownable) 
+
+## Deploying your contract
+
+To deploy the Creature contract, simply [check out the repo](https://github.com/ProjectOpenSea/opensea-creatures), get a free [Alchemy API key](https://dashboard.alchemyapi.io/signup?referral=affiliate:e535c3c3-9bc4-428f-8e27-4b70aa2e8ca5), and deploy with Truffle:
+
+`yarn install
+export ALCHEMY_KEY="<your_alchemy_project_id>"
+export MNEMONIC="<metamask>"
+export NETWORK="rinkeby"
+yarn truffle deploy --network rinkeby
+`
+
+If you're using Infura API already, you can also use the `INFURA_KEY` environment variable instead of `ALCHEMY_KEY`.
+
+> ### 📘
+> 
+> Quick tip
+> 
+> You only need to run the `export` lines above once in your shell session. We recommend that you put those lines into a `.env` file, apply it once using `. .env`, and avoid checking it in when committing your code. There's a sample `.env` file [here](https://github.com/ProjectOpenSea/opensea-creatures/blob/master/.env.sample).
+
+Note that in order to deploy with Truffle and Infura, you'll need a "seed phrase" from a MetaMask account that is funded with Ether. In order to get Ether into your Rinkeby MetaMask account, you can use the [Rinkeby Ether faucet](https://faucet.rinkeby.io/). You'll need to post a message to one of your social profiles and paste the link to your post in the test faucet. In order to obtain your "seed phrase" from Metamask click "settings" and click "reveal seed words". Make sure you don't share your seed phrase for any accounts containing Mainnet tokens!
+
+## Minting your tokens
+
+Next, we'll want to mint new assets to our newly-deployed ERC721 contracts! We'll mint these assets into an account that we control so that we can test the OpenSea auction flow for our items.
+
+After deploying to the Rinkeby network, there will be a contract on Rinkeby that will be viewable on [Rinkeby Etherscan](https://rinkeby.etherscan.io). You can find the address of the deployed contract in the output of the deployment command and find it on Etherscan by hitting the URL: `https://rinkeby.etherscan.io/address/<contract_address>`.
+
+For example, here is a [recently deployed contract](https://rinkeby.etherscan.io/address/0xeba05c5521a3b81e23d15ae9b2d07524bc453561). You should set this contract address and the address of your MetaMask account as environment variables when running the minting script:
+
+`export OWNER_ADDRESS="<my_address>"
+export NFT_CONTRACT_ADDRESS="<deployed_contract_address>"
+node scripts/mint.js
+`
+
+## What's next?
+
+At this point, we've deployed our first smart contract on the Rinkeby network and minted some new OpenSea creatures on our contract. You should be able to visit rinkeby.opensea.io and view your new creatures as NFTs inside your wallet! More on that in section 3.
+
+Next, you'll need create your custom metadata API.

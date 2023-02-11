@@ -1,0 +1,320 @@
+---
+title: "4. Smart contract improvements"
+---
+
+In this part of the tutorial, we will work on setting a maximum supply for the collection and adding a price to mint tokens from the contract. 
+
+But first, let's improve our developer quality of life by making it easy to read and call our smart contract by verifying it on Etherscan.
+
+## Verifying your smart contract on Etherscan
+
+Verifying a smart contract has several benefits: It improves our quality of life as developers since we can directly read and interact with a verified smart contract on Etherscan. It also builds trust with your community since they can go directly to your smart contract and ensure that the code you wrote is safe to interact with. 
+
+Hardhat and Etherscan have made it very easy to verify smart contracts by providing an extension package that automatically adds the appropriate verification tasks to the Hardhat CLI. We already installed the `hardhat-etherscan` package in the introduction to this tutorial, so make sure to go back to [Getting Started](/docs/getting-started-1) and review all the previous steps if you haven't already.
+
+In order to begin using the Etherscan extension package, we need to import it to our Hardhat config and add some configuration for the Etherscan API.
+
+hardhat.config.js
+
+`` /**
+* @type import('hardhat/config').HardhatUserConfig
+*/
+
+require('dotenv').config();
+require("@nomiclabs/hardhat-ethers");
+require("./scripts/deploy.js");
+require("./scripts/mint.js");
+require("@nomiclabs/hardhat-etherscan");
+
+const { ALCHEMY_KEY, ACCOUNT_PRIVATE_KEY, ETHERSCAN_API_KEY } = process.env;
+
+module.exports = {
+   solidity: "0.8.0",
+   defaultNetwork: "rinkeby",
+   networks: {
+    hardhat: {},
+    rinkeby: {
+      url: `https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_KEY}`,
+      accounts: [`0x${ACCOUNT_PRIVATE_KEY}`]
+    },
+    ethereum: {
+      chainId: 1,
+      url: `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_KEY}`,
+      accounts: [`0x${ACCOUNT_PRIVATE_KEY}`]
+    },
+  },
+  etherscan: {
+    apiKey: ETHERSCAN_API_KEY,
+  },
+}
+ ``
+
+If you run the `npx hardhat` command, you'll notice that a new task -- `verify` is added to the task list. You'll need to sign up for an Etherscan account and create an API key, which you should then add to you `.env` file
+
+![2834](/images/6f46a98-Screen_Shot_2022-01-09_at_5.00.55_PM.png "Screen Shot 2022-01-09 at 5.00.55 PM.png") ![2796](/images/08740ba-Screen_Shot_2022-01-09_at_5.04.35_PM.png "Screen Shot 2022-01-09 at 5.04.35 PM.png") 
+
+The last part to verify the contract is simple, just call the Hardhat task!
+
+Shell
+
+`npx hardhat verify $NFT_CONTRACT_ADDRESS
+`
+
+Results: 
+
+shell
+
+`> npx hardhat verify $NFT_CONTRACT_ADDRESS
+Nothing to compile
+Compiling 1 file with 0.8.0
+Successfully submitted source code for contract
+contracts/NFT.sol:NFT at 0xEC98C68b96e8D89D17C99a742CC37b5b2298dB41
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract NFT on Etherscan.
+https://rinkeby.etherscan.io/address/0xEC98C68b96e8D89D17C99a742CC37b5b2298dB41#code
+`
+
+You can now browse over to that generated Etherscan link and view your code on the decentralized web!
+
+![2848](/images/4813446-Screen_Shot_2022-01-09_at_5.11.32_PM.png "Screen Shot 2022-01-09 at 5.11.32 PM.png") 
+
+You can even make smart contract calls directly:
+
+![2802](/images/ad503b0-Screen_Shot_2022-01-09_at_5.11.43_PM.png "Screen Shot 2022-01-09 at 5.11.43 PM.png") 
+
+## Setting a token supply limit
+
+Many NFT projects like to limit the total supply of mintable tokens for various reasons. Doing that to our existing contract involves a very minor change to not allow `mintTo()` function calls to proceed if the max supply is minted
+
+NFT.sol
+
+`// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
+
+contract NFT is ERC721 {
+  using Counters for Counters.Counter;
+
+  // Constants
+  uint256 public constant TOTAL_SUPPLY = 10_000;
+
+  Counters.Counter private currentTokenId;
+
+  /// @dev Base token URI used as a prefix by tokenURI().
+  string public baseTokenURI;
+
+  constructor() ERC721("NFTTutorial", "NFT") {
+    baseTokenURI = "";
+  }
+
+  function mintTo(address recipient) public returns (uint256) {
+    uint256 tokenId = currentTokenId.current();
+    require(tokenId < TOTAL_SUPPLY, "Max supply reached");
+    
+    currentTokenId.increment();
+    uint256 newItemId = currentTokenId.current();
+    _safeMint(recipient, newItemId);
+    return newItemId;
+  }
+
+  /// @dev Returns an URI for a given token ID
+  function _baseURI() internal view virtual override returns (string memory) {
+    return baseTokenURI;
+  }
+
+  /// @dev Sets the base token URI prefix.
+  function setBaseTokenURI(string memory _baseTokenURI) public {
+    baseTokenURI = _baseTokenURI;
+  }
+}
+`
+
+The `require` line will cause the function to not succeed in executing (and not charge users money) if the condition passed to it resolves to **false**. 
+
+## Setting a price for minting your NFT
+
+Many projects like to charge a cost to mint from their contract. Charging a specific amount to call a function is relatively easy, with a few caveats:
+
+NFT.sol
+
+`// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
+
+contract NFT is ERC721 {
+  using Counters for Counters.Counter;
+
+  // Constants
+  uint256 public constant TOTAL_SUPPLY = 10_000;
+  uint256 public constant MINT_PRICE = 0.08 ether;
+
+  Counters.Counter private currentTokenId;
+
+  /// @dev Base token URI used as a prefix by tokenURI().
+  string public baseTokenURI;
+
+  constructor() ERC721("NFTTutorial", "NFT") {
+    baseTokenURI = "";
+  }
+
+  function mintTo(address recipient) public payable returns (uint256) {
+    uint256 tokenId = currentTokenId.current();
+    require(tokenId < TOTAL_SUPPLY, "Max supply reached");
+    require(msg.value == MINT_PRICE, "Transaction value did not equal the mint price");
+
+    currentTokenId.increment();
+    uint256 newItemId = currentTokenId.current();
+    _safeMint(recipient, newItemId);
+    return newItemId;
+  }
+
+  /// @dev Returns an URI for a given token ID
+  function _baseURI() internal view virtual override returns (string memory) {
+    return baseTokenURI;
+  }
+
+  /// @dev Sets the base token URI prefix.
+  function setBaseTokenURI(string memory _baseTokenURI) public {
+    baseTokenURI = _baseTokenURI;
+  }
+}
+`
+
+Note that in addition to the new constant and the new `require()` line, you should also add the `payable` modifier to the function itself. 
+
+## Withdrawing Funds
+
+Your contract now charges 0.08 ether to call the `mintTo()` function. Every time users call that function, ether will be transferred to the smart contract address. Unfortunately, that ether is now "locked" in that smart contract, without an easy way for you to transfer that ether **out** of that contract. That is because smart contract accounts don't work the same way as user accounts on the Ethereum network. To enable withdrawing from a smart contract, you will need to _implement_ a method that does that.
+
+Unfortunately, smart contract development in Solidity is prone to abuse from an exploit called the **Reentrency Problem**. We will not go into too much detail here, but you can read more about it (and how others typically avoid this problem) [here](https://medium.com/coinmonks/protect-your-solidity-smart-contracts-from-reentrancy-attacks-9972c3af7c21).
+
+Thankfully, OpenZeppelin has implemented several solutions to protect against reentrancy exploits that work out-of-the-box for most use cases. To keep things simple, we will use their `PullPayment` implementation in our `NFT.sol` smart contract.
+
+NFT.sol
+
+`// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/security/PullPayment.sol";
+
+contract NFT is ERC721, PullPayment {
+  using Counters for Counters.Counter;
+
+  // Constants
+  uint256 public constant TOTAL_SUPPLY = 10_000;
+  uint256 public constant MINT_PRICE = 0.08 ether;
+
+  Counters.Counter private currentTokenId;
+
+  /// @dev Base token URI used as a prefix by tokenURI().
+  string public baseTokenURI;
+
+  constructor() ERC721("NFTTutorial", "NFT") {
+    baseTokenURI = "";
+  }
+
+  function mintTo(address recipient) public payable returns (uint256) {
+    uint256 tokenId = currentTokenId.current();
+    require(tokenId < TOTAL_SUPPLY, "Max supply reached");
+    require(msg.value == MINT_PRICE, "Transaction value did not equal the mint price");
+
+    currentTokenId.increment();
+    uint256 newItemId = currentTokenId.current();
+    _safeMint(recipient, newItemId);
+    return newItemId;
+  }
+
+  /// @dev Returns an URI for a given token ID
+  function _baseURI() internal view virtual override returns (string memory) {
+    return baseTokenURI;
+  }
+
+  /// @dev Sets the base token URI prefix.
+  function setBaseTokenURI(string memory _baseTokenURI) public {
+    baseTokenURI = _baseTokenURI;
+  }
+}
+`
+
+Note that there is not much changed here, other than importing the `PullPayment.sol` dependency and making our NFT contract extend that contract. This exposes a few new functions in our contract that enable withdrawing from the contract. 
+
+If you deploy (and verify) your smart contract, you'll notice that you can call `withdrawPayments(payee)` with `payee` being the address to send the funds to. If the smart contract has any funds in it, they will be send to that address.
+
+## Roles and Access
+
+If you have been following along from the beginning, you'll notice that many of our implemented functions can be called from any address. This poses several **dangerous** security vulnerabilities, such as users other than yourself being able to withdraw funds from the smart contract. 
+
+Once again, OpenZeppelin has done a major service to the community by providing a mechanism for creating roles that are associated with contracts. Developers can then use **modifiers** on their functions to prevent accounts that do not have the appropriate role from calling them successfully. 
+
+You can read more about [Access Roles](https://docs.openzeppelin.com/contracts/2.x/api/access) on the OpenZeppelin documentation. For the sake of this tutorial, we will focus on the much simpler [Ownable](https://docs.openzeppelin.com/contracts/2.x/api/ownership) helper, but the two systems work similarly.
+
+Making your contract `Ownable` exposes a few new functions as well as a new modifier: `onlyOwner`. Adding this modifier to your functions will make it so that only you (or the owner) will be able to call that function. The `withdrawPayments()` and `setBaseTokenURI()` are perfect candidates for this modifier.
+
+NFT.sol
+
+`// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/security/PullPayment.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+contract NFT is ERC721, PullPayment, Ownable {
+  using Counters for Counters.Counter;
+
+  // Constants
+  uint256 public constant TOTAL_SUPPLY = 10_000;
+  uint256 public constant MINT_PRICE = 0.08 ether;
+
+  Counters.Counter private currentTokenId;
+
+  /// @dev Base token URI used as a prefix by tokenURI().
+  string public baseTokenURI;
+
+  constructor() ERC721("NFTTutorial", "NFT") {
+    baseTokenURI = "";
+  }
+
+  function mintTo(address recipient) public payable returns (uint256) {
+    uint256 tokenId = currentTokenId.current();
+    require(tokenId < TOTAL_SUPPLY, "Max supply reached");
+    require(msg.value == MINT_PRICE, "Transaction value did not equal the mint price");
+
+    currentTokenId.increment();
+    uint256 newItemId = currentTokenId.current();
+    _safeMint(recipient, newItemId);
+    return newItemId;
+  }
+
+  /// @dev Returns an URI for a given token ID
+  function _baseURI() internal view virtual override returns (string memory) {
+    return baseTokenURI;
+  }
+
+  /// @dev Sets the base token URI prefix.
+  function setBaseTokenURI(string memory _baseTokenURI) public onlyOwner {
+    baseTokenURI = _baseTokenURI;
+  }
+
+  /// @dev Overridden in order to make it an onlyOwner function
+  function withdrawPayments(address payable payee) public override onlyOwner virtual {
+      super.withdrawPayments(payee);
+  }
+}
+`
+
+This is all thats needed! These two functions are now protected against non-owners calling them. The `Ownership` contract also exposes some useful helpers: `renounceOwnership()`, `transferOwnership()`, and `isOwner()`. 
+
+## Wrapping up
+
+We went over a lot in these 4 parts of the interview. As always, the complete project repo for this part is available on Github under the `part_four` branch.
+
+Future tutorials will feature more advanced topics such as optimizations you can make to reduce gas costs, setting up a minting website, and using the OpenSea SDK to create listings
