@@ -14,12 +14,12 @@
   "topbarLinks": [
     {
       "name": "Documentation",
-      "url": "https://mintlify.com/docs"
+      "url": "https://https://present-gold-aphid.mintlify.app/"
     }
   ],
   "topbarCtaButton": {
     "name": "Get Started",
-    "url": "https://github.com/mintlify/starter"
+    "url": "0--setting-a-basic-project-up"
   },
   "anchors": [
     {
@@ -50,6 +50,10 @@
     {
       "group": "API Documentation",
       "pages": ["api-reference/authentication"]
+    },
+    {
+      "group": "Tutorial",
+      "pages": ["0--setting-a-basic-project-up","1--structuring-your-smart-contract", "2--adding-metadata"]
     },
     {
       "group": "Endpoint Examples",

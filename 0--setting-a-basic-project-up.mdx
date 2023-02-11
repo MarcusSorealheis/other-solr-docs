@@ -59,13 +59,13 @@ There's a lot going on here so let's break down some of the key portions of this
    * Mints the next value of the Counter to the `recipient`, using OpenZeppelin's nifty [\_safeMint()](https://docs.openzeppelin.com/contracts/4.x/api/token/erc721#ERC721-%5FsafeMint-address-uint256-) private method  
    * Finally, it returns the newly minted token's ID back to the caller.
 
-> ### 👍
-> 
-> Congrats!
-> 
-> This very basic contract is pretty much all you need written before we can deploy and use it. Although we are missing many important features that make NFTs exciting today (which we will add soon), this basic implementation can be deployed and used on OpenSea or any other NFT marketplace.
-> 
-> Thanks to OpenZeppelin's standardized implementation, NFT contracts today don't have to implement many tedious functions like `transferFrom`.
+ ### 👍
+ 
+ Congrats!
+ 
+ This very basic contract is pretty much all you need written before we can deploy and use it. Although we are missing many important features that make NFTs exciting today (which we will add soon), this basic implementation can be deployed and used on OpenSea or any other NFT marketplace.
+ 
+ Thanks to OpenZeppelin's standardized implementation, NFT contracts today don't have to implement many tedious functions like `transferFrom`.
 
 After writing your contract, your project should look like this:
 
@@ -95,11 +95,11 @@ First, let's create a new file, `.env` in the root folder of the project. We'll 
 * Get your private key from your MetaMask wallet by following the instructions [here](https://metamask.zendesk.com/hc/en-us/articles/360015289632)
 * Get your Alchemy API key [here](https://docs.alchemy.com/alchemy/introduction/getting-started)
 
-> ### ❗️
-> 
-> (another) warning about private keys
-> 
-> Private keys are an all-access pass to the funds within your wallet. When fetching them, make sure you are in a safe, private environment and that you are not screen-sharing via any computer program. For more information on wallet-safety read our article here TODO
+ ### ❗️
+ 
+ (another) warning about private keys
+ 
+ Private keys are an all-access pass to the funds within your wallet. When fetching them, make sure you are in a safe, private environment and that you are not screen-sharing via any computer program. For more information on wallet-safety read our article here TODO
 
 Once you have both your private key and Alchemy API key ready, paste them into `.env` in the following format:
 
@@ -188,8 +188,8 @@ deploy.js
 }
 
 main()
-.then(() => process.exit(0))
-.catch((error) => {
+.then(() = process.exit(0))
+.catch((error) = {
     console.error(error);
     process.exit(1);
 });
@@ -245,11 +245,11 @@ Contract deployed to address: {NFT_CONTRACT_ADDRESS}
 
 Grab that deployed contract address and head over to the [Rinkeby Etherscan](https://rinkeby.etherscan.io/) and see your deployed contract!
 
-> ### 📘
-> 
-> Deploying to mainnet
-> 
-> Because we took the time to define both the Rinkeby testnet and Ethereum mainnet as network options in `hardhat.config.js`, deploying the same exact contract code to mainnet (when we are ready) is as easy as replacing `--network rinkeby` with `--network ethereum` in the command above.
+ ### 📘
+ 
+ Deploying to mainnet
+ 
+ Because we took the time to define both the Rinkeby testnet and Ethereum mainnet as network options in `hardhat.config.js`, deploying the same exact contract code to mainnet (when we are ready) is as easy as replacing `--network rinkeby` with `--network ethereum` in the command above.
 
 ## Summary
 
@@ -263,13 +263,13 @@ We did a lot in this part of the tutorial! We went from an empty project to a de
 
 Our smart contract is out there, but we can't really easily do much with it just yet. In fact, we don't even know how to mint any tokens from it yet!
 
-> ### 👍
-> 
-> Challenge: Deploying to Polygon
-> 
-> Test yourself by thinking through how you could change your configuration and commands in order to deploy this same contract to the Polygon testnet: Mumbai. Assuming that for our context, Polygon is functionally the same as Ethereum, what needs to be changed or added to deploy to Polygon's network. Does the code need to change? Does the configuration file? What about the commands we ran?
-> 
-> Hint: Mumbai's chain ID is `80001` and Alchemy, our RPC provider, supports the Polygon network.
+ ### 👍
+ 
+ Challenge: Deploying to Polygon
+ 
+ Test yourself by thinking through how you could change your configuration and commands in order to deploy this same contract to the Polygon testnet: Mumbai. Assuming that for our context, Polygon is functionally the same as Ethereum, what needs to be changed or added to deploy to Polygon's network. Does the code need to change? Does the configuration file? What about the commands we ran?
+ 
+ Hint: Mumbai's chain ID is `80001` and Alchemy, our RPC provider, supports the Polygon network.
 
 In the next part of the tutorial, we'll go over how to mint tokens using some new scripts, how we can improve our contract to give it more advanced functionality such as mint purchase prices, and even add some neat metadata so that it actually shows your amazing art when users view it on OpenSea.
 
