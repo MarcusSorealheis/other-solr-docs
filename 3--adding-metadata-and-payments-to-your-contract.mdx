@@ -25,6 +25,7 @@ We can extend the `NFT.sol` contract from Step 1 to have a setter and getter for
 
 NFT.sol
 
+
 ```// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
@@ -60,6 +61,7 @@ contract NFT is ERC721 {
     baseTokenURI = _baseTokenURI;
   }
 }
+
 ```
 
 This addition to the contract will make it so that calling `tokenURI()` for any of our minted tokenIds will return the `baseTokenURI` \+ `tokenId` without any additional work on our end.
@@ -94,14 +96,18 @@ Once you have some images in the `/images` directory, pack them to an IPFS-compa
 
 Shell
 
+
 ```npx ipfs-car --pack images --output images.car
+
 ```
 
 shell
 
+
 ``` npx ipfs-car --pack images --output images.car
 root CID: bafybeihslhol5draa26unhhe7j2crwedr4tyfrvmba5qt3kyxbvb5olk4i
   output: images.car
+
 ```
 
 Next navigate to the [NFT Storage Files](https://nft.storage/files/) page to upload this CAR file to IPFS:
@@ -116,15 +122,18 @@ Now we can begin creating our metadata JSON files, with IPFS images included. In
 
 1
 
+
 ```{
     "description" : "Friendly OpenSea Creature that enjoys long swims in the ocean.",
     "external_url" : "https://example.com/?token_id=1",
     "image" : "https://bafybeihslhol5draa26unhhe7j2crwedr4tyfrvmba5qt3kyxbvb5olk4i.ipfs.dweb.link/images/1.png",
     "name" : "Sprinkles Fisherton"
  }
+
 ```
 
 2
+
 
 ```{
    "attributes" : [
@@ -161,9 +170,11 @@ Now we can begin creating our metadata JSON files, with IPFS images included. In
    "image" : "https://storage.googleapis.com/opensea-prod.appspot.com/creature/2.png",
    "name" : "Boris McCoy"
 }
+
 ```
 
 3
+
 
 ```{
     "description" : "Friendly OpenSea Creature that enjoys long swims in the ocean.",
@@ -171,20 +182,25 @@ Now we can begin creating our metadata JSON files, with IPFS images included. In
     "image" : "https://bafybeihslhol5draa26unhhe7j2crwedr4tyfrvmba5qt3kyxbvb5olk4i.ipfs.dweb.link/images/3.png",
     "name" : "Dave Starbelly"
  }
+
 ```
 
 Use the same IPFS-CAR CLI command from earlier on the metadata folder and upload that as well to NFT Storage:
 
 Shell
 
+
 ```npx ipfs-car --pack metadata --output metadata.car
+
 ```
 
 shell
 
+
 ``` npx ipfs-car --pack metadata --output metadata.car
 root CID: bafybeif6iuokmmcuwj7jgscybx3gvlcwkb6ybspwcduivl7mbqmgmmxubi
   output: metadata.car
+
 ```
 
 Once you upload to NFT Storage, your metadata is ready to be set onto your smart contract! We already know what the base URL is due to IPFS since it is the root CID returned in the CLI command: `bafybeif6iuokmmcuwj7jgscybx3gvlcwkb6ybspwcduivl7mbqmgmmxubi`
@@ -193,10 +209,13 @@ As a verification check, your project directory should look more or less as foll
 
 Shell
 
+
 ```tree -L 3 -I 'node_modules*|cache*'
+
 ```
 
 shell
+
 
 ``` tree -L 3 -I 'node_modules*|cache*'
 
@@ -229,6 +248,7 @@ shell
     ├── deploy.js
     ├── helpers.js
     └── mint.js
+
 ```
 
 ## Adding a Hardhat task to set metadata
@@ -236,6 +256,7 @@ shell
 Now lets work on two new tasks: one for calling `setBaseTokenURI()` to set new values and one for calling `tokenURI()` to fetch token metadata. Open the `scripts/mint.js` tasks file and implement as follows:
 
 mint.js
+
 
 ``` const { task } = require("hardhat/config");
 const { getContract } = require("./helpers");
@@ -275,7 +296,8 @@ task("token-uri", "Fetches the token metadata for the given token ID")
     const metadata = await fetch(metadata_url).then(res = res.json());
     console.log(`Metadata fetch response: ${JSON.stringify(metadata, null, 2)}`);
 });
- ```
+ 
+```
 
 ## Putting it all together
 
@@ -283,12 +305,15 @@ We are now ready to deploy a new contract and set the metadata on it using our n
 
 Shell
 
+
 ```npx hardhat compile
+
 ```
 
 You should see a response that looks like this:
 
 shell
+
 
 ``` npx hardhat compile
 Compiling 11 files with 0.8.0
@@ -325,6 +350,7 @@ Metadata fetch response: {
   "image": "https://bafybeihslhol5draa26unhhe7j2crwedr4tyfrvmba5qt3kyxbvb5olk4i.ipfs.dweb.link/images/2.png",
   "name": "Boris McCoy"
 }
+
 ```
 
 We're all set! Our contract is compiled & deployed, our tokens are minted, and our metadata is set and fetched.

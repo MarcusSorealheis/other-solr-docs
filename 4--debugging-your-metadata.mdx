@@ -6,17 +6,21 @@ title: "4. Debugging your metadata"
 
 If you're having issues getting your items to show up properly on OpenSea (perhaps they're missing an image or attributes), you can debug your metadata using the following API endpoint.
 
-`https://testnets-api.opensea.io/asset/<your_contract_address>/<your_token_id>/validate/ 
-`
+
+```https://testnets-api.opensea.io/asset/<your_contract_address>/<your_token_id>/validate/ 
+
+```
 
 or
 
 Shell
 
-`curl --request GET \
+
+```curl --request GET \
      --url https://api.opensea.io/api/v1/asset/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d/1/validate \
      --header 'Accept: application/json' \
      --header 'X-API-KEY: 4d51f7fa929e4880a17a98d8c97e57b5'
-`
+
+```
 
 [View our API docs to learn more ](/reference/validate-assets)

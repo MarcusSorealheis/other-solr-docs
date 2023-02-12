@@ -16,7 +16,8 @@ In order to begin using the Etherscan extension package, we need to import it to
 
 hardhat.config.js
 
-`` /**
+
+``` /**
 * @type import('hardhat/config').HardhatUserConfig
 */
 
@@ -47,7 +48,8 @@ module.exports = {
     apiKey: ETHERSCAN_API_KEY,
   },
 }
- ``
+ 
+```
 
 If you run the `npx hardhat` command, you'll notice that a new task -- `verify` is added to the task list. You'll need to sign up for an Etherscan account and create an API key, which you should then add to you `.env` file
 
@@ -57,14 +59,17 @@ The last part to verify the contract is simple, just call the Hardhat task!
 
 Shell
 
-`npx hardhat verify $NFT_CONTRACT_ADDRESS
-`
+
+```npx hardhat verify $NFT_CONTRACT_ADDRESS
+
+```
 
 Results: 
 
 shell
 
-`> npx hardhat verify $NFT_CONTRACT_ADDRESS
+
+```> npx hardhat verify $NFT_CONTRACT_ADDRESS
 Nothing to compile
 Compiling 1 file with 0.8.0
 Successfully submitted source code for contract
@@ -73,7 +78,8 @@ for verification on the block explorer. Waiting for verification result...
 
 Successfully verified contract NFT on Etherscan.
 https://rinkeby.etherscan.io/address/0xEC98C68b96e8D89D17C99a742CC37b5b2298dB41#code
-`
+
+```
 
 You can now browse over to that generated Etherscan link and view your code on the decentralized web!
 
@@ -89,7 +95,8 @@ Many NFT projects like to limit the total supply of mintable tokens for various 
 
 NFT.sol
 
-`// SPDX-License-Identifier: MIT
+
+```// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
@@ -130,7 +137,8 @@ contract NFT is ERC721 {
     baseTokenURI = _baseTokenURI;
   }
 }
-`
+
+```
 
 The `require` line will cause the function to not succeed in executing (and not charge users money) if the condition passed to it resolves to **false**. 
 
@@ -140,7 +148,8 @@ Many projects like to charge a cost to mint from their contract. Charging a spec
 
 NFT.sol
 
-`// SPDX-License-Identifier: MIT
+
+```// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
@@ -183,7 +192,8 @@ contract NFT is ERC721 {
     baseTokenURI = _baseTokenURI;
   }
 }
-`
+
+```
 
 Note that in addition to the new constant and the new `require()` line, you should also add the `payable` modifier to the function itself. 
 
@@ -197,7 +207,8 @@ Thankfully, OpenZeppelin has implemented several solutions to protect against re
 
 NFT.sol
 
-`// SPDX-License-Identifier: MIT
+
+```// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
@@ -241,7 +252,8 @@ contract NFT is ERC721, PullPayment {
     baseTokenURI = _baseTokenURI;
   }
 }
-`
+
+```
 
 Note that there is not much changed here, other than importing the `PullPayment.sol` dependency and making our NFT contract extend that contract. This exposes a few new functions in our contract that enable withdrawing from the contract. 
 
@@ -259,7 +271,8 @@ Making your contract `Ownable` exposes a few new functions as well as a new modi
 
 NFT.sol
 
-`// SPDX-License-Identifier: MIT
+
+```// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
@@ -309,7 +322,8 @@ contract NFT is ERC721, PullPayment, Ownable {
       super.withdrawPayments(payee);
   }
 }
-`
+
+```
 
 This is all thats needed! These two functions are now protected against non-owners calling them. The `Ownership` contract also exposes some useful helpers: `renounceOwnership()`, `transferOwnership()`, and `isOwner()`. 
 

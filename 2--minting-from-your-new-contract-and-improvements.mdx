@@ -22,6 +22,7 @@ To start, edit the replace the existing `deploy.js` file with a task-based imple
 
 deploy.js
 
+
 ``` const { task } = require("hardhat/config");
 const { getAccount } = require("./helpers");
 
@@ -35,13 +36,15 @@ task("deploy", "Deploys the NFT.sol contract").setAction(async function (taskArg
     const nft = await nftContractFactory.deploy();
     console.log(`Contract deployed to address: ${nft.address}`);
 });
- ```
+ 
+```
 
 We've made quite a few changes here, but the overall logic is the same. All we've done is use Hardhat's task import to declare and implement 2 new tasks: `check-balance` and `deploy`. Check balance uses a `getAccount()` helper method which we will define shortly to fetch the account and make an async call `getBalance()`. Deploy works almost the same as the prior implementation. 
 
 Next, define some common helpers that we can reuse in later pieces of code. Create a new `helpers.js` file and add in 3 new helper methods:
 
 helpers.js
+
 
 ``` const { ethers } = require("ethers");
 
@@ -73,7 +76,8 @@ module.exports = {
     getProvider,
     getAccount,
 }
- ```
+ 
+```
 
 This new helpers file moves common logic we will need to use a lot (like getting an environment variable or the account based on the PK we added in the `.env` file) and exports them as easy-to-use helpers.  
 **Note:** connection provider objects allow us to connect to Alchemy or other network providers. Read more about that [in the ethers.js documentation](https://docs.ethers.io/v5/api/providers/)
@@ -83,6 +87,7 @@ The `getProvider()` helper also lets us use other EVM networks (like Ethereum ma
 Last, lets slightly modify the `hardhat.config.js` configuration file to import our newly defined tasks
 
 hardhat.config.js
+
 
 ``` /**
 * @type import('hardhat/config').HardhatUserConfig
@@ -110,16 +115,20 @@ module.exports = {
     },
   },
 }
- ```
+ 
+```
 
 We can now run our new tasks using the Hardhat CLI to quickly repeat common actions:
 
 Shell
 
+
 ```npx hardhat
+
 ```
 
 shell
+
 
 ```Hardhat version 2.7.0
 
@@ -152,30 +161,39 @@ AVAILABLE TASKS:
   test          Runs mocha tests
 
 To get help for a specific task run: npx hardhat help [task]
+
 ```
 
 Shell
 
+
 ```npx hardhat check-balance
+
 ```
 
 Resluts: 
 
 Text
 
+
 ```Account balance for 0x6Ed80feA9f7cc8DB42F91919bF3E5990Be0AA64F: 496162367925141460
+
 ```
 
 Shell
 
+
 ```npx hardhat deploy
+
 ```
 
 Results: 
 
 Shell
 
+
 ```Contract deployed to address: 0x61E815D04578B3E251d5Dca28b7CA99378dF66FE
+
 ```
 
 **Note:** you might get a message from ethers.js that you are being throttled by Alchemy. Don't worry, `ethers.js` intelligently waits for your rate-limiting to end before continuing with the task execution.
@@ -187,6 +205,7 @@ The `deploy` command outputs the address of the NFT contract we just deployed. H
 Now we can move on to new stuff: creating a `mint` task to actually call our smart contract! Add a new `mint.js` file to your `scripts` folder and write the task:
 
 JavaScript
+
 
 ``` const { task } = require("hardhat/config");
 const { getContract } = require("./helpers");
@@ -200,7 +219,8 @@ task("mint", "Mints from the NFT contract")
     });
     console.log(`Transaction Hash: ${transactionResponse.hash}`);
 });
- ```
+ 
+```
 
 This new task, which takes in an `--address` CLI flag, gets an instance of the contract we deployed in the previous step and calls it's `mintTo()` function with the address we will pass in the command line. In order for this to work, we will need to do 2 more things: 
 
@@ -212,16 +232,19 @@ Open up the `.env` file you created in the last part of the tutorial and add a n
 
 .env
 
+
 ```ALCHEMY_KEY = "alchemy-api-key"
 ACCOUNT_PRIVATE_KEY = "private-key"
 NETWORK="rinkeby"
 NFT_CONTRACT_ADDRESS="0x61E815D04578B3E251d5Dca28b7CA99378dF66FE"
+
 ```
 
 **Adding the `getContract()` helper**  
 Now we will need to implement a new helper for fetching contract instances that we can then make calls to directly. Here's what `helper.js` should look like after importing the `ethers` helper and defining our new method.
 
 helpers.js
+
 
 ``` const { ethers } = require("ethers");
 const { getContractAt } = require("@nomiclabs/hardhat-ethers/internal/helpers");
@@ -261,11 +284,13 @@ module.exports = {
     getAccount,
     getContract,
 }
- ```
+ 
+```
 
 Note that we also need to export this new helper as part of `module.exports` in Lines 34 - 39\. The very last step is importing the new `mint.js` file to our `hardhat.config.js` configuration so that it is picked up by Hardhat:
 
 hardhat.config.js
+
 
 ``` /**
 * @type import('hardhat/config').HardhatUserConfig
@@ -294,16 +319,20 @@ module.exports = {
     },
   },
 }
- ```
+ 
+```
 
 We are now ready to go! To mint tokens, call our new `mint` task:
 
 Shell
 
+
 ```npx hardhat mint --address 0xb9720BE63Ea8896956A06d2dEd491De125fD705E
+
 ```
 
 Shell
+
 
 ``` npx hardhat mint --address 0xb9720BE63Ea8896956A06d2dEd491De125fD705E
 ========= NOTICE =========
@@ -319,6 +348,7 @@ request rate/limit and enable other perks, such as metrics and advanced APIs.
 For more details: https://docs.ethers.io/api-keys/
 ==========================
 Transaction Hash: 0x16ea832e486f115fb828dbec20e578a008675998256c807682d8cbdca17264d3
+
 ```
 
 If you take that transaction hash over to [Etherscan](https://rinkeby.etherscan.io/tx/0x16ea832e486f115fb828dbec20e578a008675998256c807682d8cbdca17264d3), you should see something like this:
@@ -333,10 +363,13 @@ If you followed this part of the tutorial right, your project should be structur
 
 Text
 
+
 ```tree -L 3 -I 'node_modules*|cache*'
+
 ```
 
 Shell
+
 
 ``` tree -L 3 -I 'node_modules*|cache*'
 .
@@ -360,6 +393,7 @@ Shell
     └── mint.js
 
 8 directories, 10 files
+
 ```
 
 This is now a fully functioning NFT item minted to your wallet and ready to be used. You can continue to call `npx hardhat mint --address {address}` in order to mint more tokens to your wallet. You can also call `deploy` again to deploy the contract another time. 

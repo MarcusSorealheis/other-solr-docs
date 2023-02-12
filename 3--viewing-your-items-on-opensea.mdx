@@ -10,8 +10,10 @@ We also minted 25 new items to this contract, so that the total supply of items 
 
 Now for the exciting part! OpenSea has a Rinkeby environment that allows developers to test their integration with OpenSea. This can be found at [testnets.opensea.io](https://testnets.opensea.io). By hitting the right URL, we should be able to immediately view one of our items on OpenSea. The URL can be constructed in the following way:
 
-`https://testnets.opensea.io/assets/<asset_contract_address>/<token_id>
-`
+
+```https://testnets.opensea.io/assets/<asset_contract_address>/<token_id>
+
+```
 
 Where `asset_contract_address` is the address of our contract, and `token_id` is one of the token id's of our items. For example, for the OpenSea Creature contract, here's OpenSea Creature #12:
 
@@ -21,13 +23,17 @@ Where `asset_contract_address` is the address of our contract, and `token_id` is
 
 By using your own contract address and token ID, you can view your item too and double check that everything shows up as expected. Notice that the attributes we included in the token metadata showed up as "properties" and "stats" for the item. This will automatically happen as long as you include them as strings or ints in the attributes section of your metadata. To test out the integration, simply navigate to:
 
-`https://testnets.opensea.io/assets/<your_contract_address>/<token_id>
-`
+
+```https://testnets.opensea.io/assets/<your_contract_address>/<token_id>
+
+```
 
 By default, OpenSea will cache the data for your asset. Need to force an update to your item? Just hit the API with the `force_update` param:
 
-`https://testnets-api.opensea.io/api/v1/asset/<your_contract_address>/<token_id>/?force_update=true
-`
+
+```https://testnets-api.opensea.io/api/v1/asset/<your_contract_address>/<token_id>/?force_update=true
+
+```
 
 ## What's next?
 

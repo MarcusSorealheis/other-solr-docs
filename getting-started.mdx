@@ -33,25 +33,32 @@ Create a new folder on your computer and initialize a new project. After that, a
 
 Shell
 
+
 ```mkdir nft-tutorial
 cd nft-tutorial
+
 ```
 
 Confirm the valid minimum version of npm is used.
 
 Shell
 
+
 ```npm --version
+
 ```
 
 Response `8.0.0` or newer. 
 
 Shell
 
+
 ```npm init
+
 ```
 
 Shell
+
 
 ```# fill out the form fields or use defaults
 ...
@@ -67,6 +74,7 @@ Shell
   "author": "",
   "license": "ISC"
 }
+
 ```
 
 **Install dependencies**
@@ -80,6 +88,7 @@ Shell
 * [node-fetch](https://www.npmjs.com/package/node-fetch)
 
 Shell
+
 
 ```npm install --save-dev hardhat
 ...
@@ -101,11 +110,13 @@ npm install --save-dev [[email protected]](/cdn-cgi/l/email-protection)^5.0.0
 
 npm install --save-dev [[email protected]](/cdn-cgi/l/email-protection)
 ...
+
 ```
 
 To use your local installation of Hardhat, you need to use `npx` to run it (i.e. `npx hardhat`). After you've finished all installations, your `package.json` file should look (more or less) like this:
 
 package.json
+
 
 ```{
   "name": "nft-tutorial",
@@ -128,6 +139,7 @@ package.json
     "dotenv": "^10.0.0"
   }
 }
+
 ```
 
 ## Initialize the Hardhat
@@ -135,6 +147,7 @@ package.json
 Final step in setting up this project: initializing a (blank) Hardhat project:
 
 Text
+
 
 ``` npx hardhat
 888    888                      888 888               888
@@ -158,17 +171,20 @@ Text
   ...
   
   ✨ Config file created ✨
+
 ```
 
 Annndd you're all done! Your project should be structured like this:
 
 Shell
 
+
 ``` tree -L 3 -I 'node_modules*|cache*'
 .
 ├── hardhat.config.js
 ├── package-lock.json
 └── package.json
+
 ```
 
 * `hardhat.config.js` is a hardhat configuration file where we can define our blockchain configuration variables such as which network we want to operate on and which accounts to use.
