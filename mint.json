@@ -40,15 +40,6 @@
     {
       "group": "Tutorial",
       "pages": ["erc721-tutorial","1--structuring-your-smart-contract", "2--adding-metadata"]
-    },
-    {
-      "group": "Endpoint Examples",
-      "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/update",
-        "api-reference/endpoint/delete"
-      ]
     }
   ],
   "footerSocials": {
