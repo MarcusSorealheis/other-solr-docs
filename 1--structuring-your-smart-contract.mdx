@@ -64,12 +64,12 @@ For developers to set up contracts on OpenSea automatically.
 To deploy the Creature contract, simply [check out the repo](https://github.com/ProjectOpenSea/opensea-creatures), get a free [Alchemy API key](https://dashboard.alchemyapi.io/signup?referral=affiliate:e535c3c3-9bc4-428f-8e27-4b70aa2e8ca5), and deploy with Truffle:
 
 
-```yarn install
+```shell 
+yarn install
 export ALCHEMY_KEY="<your_alchemy_project_id>"
 export MNEMONIC="<metamask>"
 export NETWORK="rinkeby"
 yarn truffle deploy --network rinkeby
-
 ```
 
 If you're using Infura API already, you can also use the `INFURA_KEY` environment variable instead of `ALCHEMY_KEY`.
@@ -86,10 +86,10 @@ After deploying to the Rinkeby network, there will be a contract on Rinkeby that
 For example, here is a [recently deployed contract](https://rinkeby.etherscan.io/address/0xeba05c5521a3b81e23d15ae9b2d07524bc453561). You should set this contract address and the address of your MetaMask account as environment variables when running the minting script:
 
 
-```export OWNER_ADDRESS="<my_address>"
+```shell
+export OWNER_ADDRESS="<my_address>"
 export NFT_CONTRACT_ADDRESS="<deployed_contract_address>"
 node scripts/mint.js
-
 ```
 
 ## What's next?
