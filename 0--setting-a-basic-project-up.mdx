@@ -9,9 +9,9 @@ Let start organizing the basics of our NFT contract repo! We'll want to start by
 
 Shell
 
-`mkdir contracts
+```mkdir contracts
 mkdir scripts
-`
+```
 
 All Solidity code will run in `contracts/`, whereas `scripts/` will contain some JavaScript files we will need to bootstrap the contracts and deploy them later on.
 
@@ -21,7 +21,7 @@ Open up the new `nft-tutorial` directory in your IDE of choice and create a new 
 
 NFT.sol
 
-`// SPDX-License-Identifier: MIT
+```// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
@@ -43,7 +43,7 @@ contract NFT is ERC721 {
         return newItemId;
     }
 }
-`
+```
 
 There's a lot going on here so let's break down some of the key portions of this code: 
 
@@ -71,18 +71,18 @@ After writing your contract, your project should look like this:
 
 Shell
 
-`tree -L 3 -I 'node_modules*|cache*'
-`
+```tree -L 3 -I 'node_modules*|cache*'
+```
 
 Shell
 
-`├── contracts
+```├── contracts
 │   └── NFT.sol
 ├── hardhat.config.js
 ├── package-lock.json
 ├── package.json
 └── scripts
-`
+```
 
 ## Compiling our contract
 
@@ -105,15 +105,15 @@ Once you have both your private key and Alchemy API key ready, paste them into `
 
 .env
 
-`ALCHEMY_KEY = "alchemy-api-key"
+```ALCHEMY_KEY = "alchemy-api-key"
 ACCOUNT_PRIVATE_KEY = "private-key"
-`
+```
 
 Next, update the `hardhat.config.js` file to add the following:
 
 hardhat.config.js
 
-`` /**
+``` /**
 * @type import('hardhat/config').HardhatUserConfig
 */
 
@@ -138,7 +138,7 @@ module.exports = {
     },
   },
 }
- ``
+```
 
 These changes should be relatively straightforward: 
 
@@ -150,16 +150,16 @@ We are now ready to compile the contract.
 
 Shell
 
-`npx hardhat compile
-`
+```npx hardhat compile
+```
 
 Your results: 
 
 Text
 
-`Compiling 1 file with 0.8.0
+```Compiling 1 file with 0.8.0
 Compilation finished successfully
-`
+```
 
 If all went well, the above command should work with no errors.
 
@@ -171,7 +171,7 @@ Inside the `scripts/` folder, create a file called `deploy.js` and implement it 
 
 deploy.js
 
-`` async function main() {
+``` async function main() {
 
     // Get our account (as deployer) to verify that a minimum wallet balance is available
     const [deployer] = await ethers.getSigners();
@@ -193,7 +193,7 @@ main()
     console.error(error);
     process.exit(1);
 });
- ``
+ ```
 
 This JS function fetches the compiled NFT contract from `NFT.sol` and deploys it. It also prints out your wallet balance before and after the deploy, since gas will be used in the transaction.  
 Most of this code is copied over from Hardhat, who do an excellent job of explaining the different components at play here [in their tutorial](https://hardhat.org/tutorial/testing-contracts.html). Don't let the section title fool you, it is full of useful Hardhat information not just related to testing.
@@ -202,12 +202,12 @@ Our project should now look like this
 
 Shell
 
-`tree -L 3 -I 'node_modules*|cache*'
-`
+```tree -L 3 -I 'node_modules*|cache*'
+```
 
 Shell
 
-`├── artifacts
+```├── artifacts
 │   ├── @openzeppelin
 │   │   └── contracts
 │   ├── build-info
@@ -223,7 +223,7 @@ Shell
     └── deploy.js
 
 8 directories, 6 files
-`
+```
 
 _Note:_ The `artifacts` directory contains all our compiled contracts and their dependencies.
 
@@ -231,17 +231,17 @@ We are now ready to deploy the contract!
 
 Shell
 
-`npx hardhat run scripts/deploy.js --network rinkeby
-`
+```npx hardhat run scripts/deploy.js --network rinkeby
+```
 
 You should see a response that looks like this:
 
 Shell
 
-`Deploying contracts with the account: {ACCOUNT_ADDRESS}
+```Deploying contracts with the account: {ACCOUNT_ADDRESS}
 Account balance: 505059205368653101
 Contract deployed to address: {NFT_CONTRACT_ADDRESS}
-`
+```
 
 Grab that deployed contract address and head over to the [Rinkeby Etherscan](https://rinkeby.etherscan.io/) and see your deployed contract!
 

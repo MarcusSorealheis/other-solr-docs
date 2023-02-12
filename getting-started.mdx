@@ -9,11 +9,11 @@ In order to interact with a smart contract on Ethereum, you will need to install
 
 MetaMask, one of the most popular wallet apps, has an extension that can be installed directly into your web browser as well as a mobile app that you can use on iOS and Android. [Download MetaMask here](https://metamask.io/download.html) and create a new wallet.
 
-> ### ❗️
-> 
-> Your wallet credentials should be kept private!
-> 
-> When creating your new MetaMask wallet, you'll be given a seed phrase of 12 randomly generated words. These words can give you (or anyone else!) access to your account to send transactions and add or remove funds from your account. Keep this seed phrase somewhere secure, and never share it on the internet. We recommend [1Password](https://1password.com/) for keeping it secure.
+ ### ❗️
+ 
+ Your wallet credentials should be kept private!
+ 
+ When creating your new MetaMask wallet, you'll be given a seed phrase of 12 randomly generated words. These words can give you (or anyone else!) access to your account to send transactions and add or remove funds from your account. Keep this seed phrase somewhere secure, and never share it on the internet. We recommend [1Password](https://1password.com/) for keeping it secure.
 
 ![980](/images/4575913-mm-os-.png "mm-os-.png") 
 
@@ -33,27 +33,27 @@ Create a new folder on your computer and initialize a new project. After that, a
 
 Shell
 
-`mkdir nft-tutorial
+```mkdir nft-tutorial
 cd nft-tutorial
-`
+```
 
 Confirm the valid minimum version of npm is used.
 
 Shell
 
-`npm --version
-`
+```npm --version
+```
 
 Response `8.0.0` or newer. 
 
 Shell
 
-`npm init
-`
+```npm init
+```
 
 Shell
 
-`# fill out the form fields or use defaults
+```# fill out the form fields or use defaults
 ...
 
 {
@@ -67,7 +67,7 @@ Shell
   "author": "",
   "license": "ISC"
 }
-`
+```
 
 **Install dependencies**
 
@@ -81,7 +81,7 @@ Shell
 
 Shell
 
-`npm install --save-dev hardhat
+```npm install --save-dev hardhat
 ...
 
 npm install --save-dev @nomiclabs/hardhat-ethers
@@ -101,13 +101,13 @@ npm install --save-dev [[email protected]](/cdn-cgi/l/email-protection)^5.0.0
 
 npm install --save-dev [[email protected]](/cdn-cgi/l/email-protection)
 ...
-`
+```
 
 To use your local installation of Hardhat, you need to use `npx` to run it (i.e. `npx hardhat`). After you've finished all installations, your `package.json` file should look (more or less) like this:
 
 package.json
 
-`{
+```{
   "name": "nft-tutorial",
   "version": "1.0.0",
   "description": "",
@@ -128,7 +128,7 @@ package.json
     "dotenv": "^10.0.0"
   }
 }
-`
+```
 
 ## Initialize the Hardhat
 
@@ -136,7 +136,7 @@ Final step in setting up this project: initializing a (blank) Hardhat project:
 
 Text
 
-`> npx hardhat
+``` npx hardhat
 888    888                      888 888               888
 888    888                      888 888               888
 888    888                      888 888               888
@@ -158,18 +158,18 @@ Text
   ...
   
   ✨ Config file created ✨
-`
+```
 
 Annndd you're all done! Your project should be structured like this:
 
 Shell
 
-`> tree -L 3 -I 'node_modules*|cache*'
+``` tree -L 3 -I 'node_modules*|cache*'
 .
 ├── hardhat.config.js
 ├── package-lock.json
 └── package.json
-`
+```
 
 * `hardhat.config.js` is a hardhat configuration file where we can define our blockchain configuration variables such as which network we want to operate on and which accounts to use.
 * `package.json` and `package-lock.json` are npm-created files used to define dependencies we might need.

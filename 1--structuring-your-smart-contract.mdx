@@ -17,7 +17,7 @@ The sample code is a collectible called OpenSea Creatures. OpenSea Creatures are
 
 sol
 
-`pragma solidity ^0.5.0;
+```pragma solidity ^0.5.0;
 
 import "./ERC721Tradable.sol";
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
@@ -33,7 +33,7 @@ contract Creature is TradeableERC721Token {
     return <exampleUrlHere>;
   }
 }
-`
+```
 
 As you can see, the contract itself is pretty simple. It just inherits from `TradeableERC721Token`, which in turn inherits from the OpenZeppelin ERC721 contracts (which implement all of the necessary ERC721 methods). You'll probably have more logic in your game, but the important piece for OpenSea is the `baseTokenURI` method, which allows us to map the `tokenId`'s in the Creature contract to some metadata off-chain about the contract. We'll learn more about this in the [next section](/docs/2-adding-metadata).
 
@@ -61,20 +61,15 @@ For developers to set up contracts on OpenSea automatically.
 
 To deploy the Creature contract, simply [check out the repo](https://github.com/ProjectOpenSea/opensea-creatures), get a free [Alchemy API key](https://dashboard.alchemyapi.io/signup?referral=affiliate:e535c3c3-9bc4-428f-8e27-4b70aa2e8ca5), and deploy with Truffle:
 
-`yarn install
+```yarn install
 export ALCHEMY_KEY="<your_alchemy_project_id>"
 export MNEMONIC="<metamask>"
 export NETWORK="rinkeby"
 yarn truffle deploy --network rinkeby
-`
+```
 
 If you're using Infura API already, you can also use the `INFURA_KEY` environment variable instead of `ALCHEMY_KEY`.
-
-> ### 📘
-> 
-> Quick tip
-> 
-> You only need to run the `export` lines above once in your shell session. We recommend that you put those lines into a `.env` file, apply it once using `. .env`, and avoid checking it in when committing your code. There's a sample `.env` file [here](https://github.com/ProjectOpenSea/opensea-creatures/blob/master/.env.sample).
+ ### 📘  Quick tip  You only need to run the `export` lines above once in your shell session. We recommend that you put those lines into a `.env` file, apply it once using `. .env`, and avoid checking it in when committing your code. There's a sample `.env` file [here](https://github.com/ProjectOpenSea/opensea-creatures/blob/master/.env.sample).
 
 Note that in order to deploy with Truffle and Infura, you'll need a "seed phrase" from a MetaMask account that is funded with Ether. In order to get Ether into your Rinkeby MetaMask account, you can use the [Rinkeby Ether faucet](https://faucet.rinkeby.io/). You'll need to post a message to one of your social profiles and paste the link to your post in the test faucet. In order to obtain your "seed phrase" from Metamask click "settings" and click "reveal seed words". Make sure you don't share your seed phrase for any accounts containing Mainnet tokens!
 
@@ -86,10 +81,10 @@ After deploying to the Rinkeby network, there will be a contract on Rinkeby that
 
 For example, here is a [recently deployed contract](https://rinkeby.etherscan.io/address/0xeba05c5521a3b81e23d15ae9b2d07524bc453561). You should set this contract address and the address of your MetaMask account as environment variables when running the minting script:
 
-`export OWNER_ADDRESS="<my_address>"
+```export OWNER_ADDRESS="<my_address>"
 export NFT_CONTRACT_ADDRESS="<deployed_contract_address>"
 node scripts/mint.js
-`
+```
 
 ## What's next?
 

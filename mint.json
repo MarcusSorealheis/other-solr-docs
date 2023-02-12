@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Starter Kit",
+  "name": "Marcus Mintlifies OpenSea Docs", 
   "logo": {
     "dark": "/logo/dark.png",
     "light": "/logo/light.png"
@@ -14,46 +14,32 @@
   "topbarLinks": [
     {
       "name": "Documentation",
-      "url": "https://https://present-gold-aphid.mintlify.app/"
+      "url": "https://present-gold-aphid.mintlify.app/"
     }
   ],
   "topbarCtaButton": {
     "name": "Get Started",
-    "url": "0--setting-a-basic-project-up"
+    "url": "creating-your-first-nft-smart-contract"
   },
   "anchors": [
     {
       "name": "API Reference",
       "icon": "rectangle-terminal",
       "url": "api-reference"
-    },
-    {
-      "name": "Changelog",
-      "icon": "list",
-      "url": "https://mintlify.com"
-    },
-    {
-      "name": "Community",
-      "icon": "discord",
-      "url": "https://mintlify.com/community"
     }
   ],
   "navigation": [
     {
       "group": "Home",
-      "pages": ["introduction", "development"]
-    },
-    {
-      "group": "Learn More",
-      "pages": ["features", "resources"]
+      "pages": ["getting-started", "0--setting-a-basic-project-up", "2--minting-from-your-new-contract-and-improvements", "3--adding-metadata-and-payments-to-your-contract"]
     },
     {
       "group": "API Documentation",
-      "pages": ["api-reference/authentication"]
+      "pages": ["api-reference/overview"]
     },
     {
       "group": "Tutorial",
-      "pages": ["0--setting-a-basic-project-up","1--structuring-your-smart-contract", "2--adding-metadata"]
+      "pages": ["erc721-tutorial","1--structuring-your-smart-contract", "2--adding-metadata"]
     },
     {
       "group": "Endpoint Examples",
@@ -66,8 +52,7 @@
     }
   ],
   "footerSocials": {
-    "twitter": "https://twitter.com/mintlify",
-    "github": "https://github.com/mintlify",
-    "linkedin": "https://www.linkedin.com/company/mintsearch"
+    "twitter": "https://twitter.com/marcusforpeace",
+    "github": "https://github.com/marcussorealheis"
   }
 }
